@@ -133,11 +133,12 @@ class PostPagesTests(TestCase):
     def test_index_cache(self):
         """Check that @cache_page works correctly."""
         response = self.authorized_client.get(reverse('posts:index'))
-        self.assertIn(self.post, response.context['page_obj'])
         temp = response.content
         self.post_two.delete()
-        self.assertIn(temp, response.content)
+        response = self.authorized_client.get(reverse('posts:index'))
+        self.assertEqual(temp, response.content)
         cache.clear()
+        self.assertEqual(temp, response.content)
         response = self.authorized_client.get(reverse('posts:index'))
         self.assertNotEqual(temp, response.content)
 
@@ -151,6 +152,11 @@ class PostPagesTests(TestCase):
         self.assertTrue(
             Follow.objects.filter(user=self.user, author=self.author).exists()
         )
+
+    def test_profile_unfollow(self):
+        """Check that profile_unfollow works correctly."""
+        self.authorized_client.force_login(self.user)
+        Follow.objects.create(user=self.user, author=self.author)
         self.authorized_client.post(
             reverse('posts:profile_unfollow',
                     kwargs={'username': self.author.username})
@@ -164,9 +170,7 @@ class PostPagesTests(TestCase):
          and not appears if user is not follower.
          """
         self.authorized_client.force_login(self.user)
-        self.authorized_client.post(
-            reverse('posts:profile_follow',
-                    kwargs={'username': self.author.username}))
+        Follow.objects.create(user=self.user, author=self.author)
         response = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertIn(self.post, response.context['page_obj'])
         self.authorized_client.force_login(self.user_without_follow)
