@@ -149,8 +149,9 @@ class PostFormTests(TestCase):
                                  kwargs={'post_id': self.post.id}
                              ))
         self.assertTrue(
-            Comment.objects.select_related('post').filter(
+            Comment.objects.filter(
                 text=form_data['text'],
-                author=self.user
+                author=self.user,
+                post=self.post
             ).exists()
         )
