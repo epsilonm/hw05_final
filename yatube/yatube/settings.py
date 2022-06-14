@@ -147,5 +147,6 @@ CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'KEY_PREFIX': 'index_page',
     }
 }
