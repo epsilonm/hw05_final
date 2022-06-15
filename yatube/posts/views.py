@@ -57,9 +57,8 @@ def profile(request, username):
 def post_detail(request, post_id):
     """Represents post with information about author and group"""
     template = 'posts/post_detail.html'
-    post = get_object_or_404(Post.objects.prefetch_related('author',
-                                                         'group'),
-                             pk=post_id)
+    post = get_object_or_404(Post.objects.prefetch_related(
+        'author', 'group'), pk=post_id)
     context = {
         'post': post,
         'form': CommentForm(),
