@@ -138,11 +138,10 @@ class PostPagesTests(TestCase):
         response = self.authorized_client.get(reverse('posts:index'))
         self.assertEqual(temp, response.content)
         cache.clear()
-        self.assertEqual(temp, response.content)
         response = self.authorized_client.get(reverse('posts:index'))
         self.assertNotEqual(temp, response.content)
 
-    def test_profile_follow_and_unfollow(self):
+    def test_profile_follow(self):
         """Check that profile_follow works correctly."""
         self.authorized_client.force_login(self.user)
         self.authorized_client.post(
