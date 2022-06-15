@@ -44,7 +44,7 @@ def profile(request, username):
     posts = author.posts.select_related('group')
     page_obj = get_page_obj(request.GET.get('page'),
                             posts, settings.POST_LIM)
-    following = (request.user.is_authenticated and request.user != author
+    following = (request.user.is_authenticated
                  and author.following.filter(user=request.user).exists())
     context = {
         'page_obj': page_obj,
@@ -57,14 +57,13 @@ def profile(request, username):
 def post_detail(request, post_id):
     """Represents post with information about author and group"""
     template = 'posts/post_detail.html'
-    post = get_object_or_404(Post.objects.select_related('author',
+    post = get_object_or_404(Post.objects.prefetch_related('author',
                                                          'group'),
                              pk=post_id)
-    form = CommentForm()
     context = {
         'post': post,
-        'form': form,
-        'comments': post.comments.all().prefetch_related('author')
+        'form': CommentForm(),
+        'comments': post.comments.all()
     }
     return render(request, template, context)
 
@@ -131,9 +130,8 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    if request.user != author and not Follow.objects.get_or_create(
-            user=request.user, author=author):
-        Follow.objects.create(
+    if request.user != author:
+        Follow.objects.get_or_create(
             user=request.user, author=author)
     return redirect('posts:follow_index')
 
