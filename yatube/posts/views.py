@@ -62,7 +62,7 @@ def post_detail(request, post_id):
     context = {
         'post': post,
         'form': CommentForm(),
-        'comments': post.comments.all()
+        'comments': post.comments.select_related('author').all()
     }
     return render(request, template, context)
 
