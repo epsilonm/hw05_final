@@ -32,7 +32,7 @@
               редактировать запись
           </a>
           {% if request.user == post.author %}
-          <a class="btn btn-primary" href="{% url 'posts:delete_post' post.pk %}">
+          <a style="border: darkred; background: red" class="btn btn-primary" href="{% url 'posts:delete_post' post.pk %}">
               удалить запись
           </a>
           {% endif %}
