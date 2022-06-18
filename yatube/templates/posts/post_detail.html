@@ -31,6 +31,11 @@
           <a class="btn btn-primary" href="{% url 'posts:update_post' post.pk %}">
               редактировать запись
           </a>
+          {% if request.user == post.author %}
+          <a class="btn btn-primary" href="{% url 'posts:delete_post' post.pk %}">
+              удалить запись
+          </a>
+          {% endif %}
           {% include 'posts/includes/comment.html' %}
       </article>
   </div>

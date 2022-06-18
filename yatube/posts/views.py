@@ -103,6 +103,15 @@ def post_edit(request, post_id):
                   )
 
 
+def post_delete(request, post_id):
+    """Delete post object and redirects to author profile."""
+    post = get_object_or_404(Post.objects.select_related(
+        'author', 'group'), pk=post_id)
+    if request.user == post.author:
+        post.delete()
+    return redirect('posts:profile', post.author.username)
+
+
 @login_required
 def add_comment(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
