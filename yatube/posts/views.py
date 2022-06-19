@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 
 from posts.models import Post, Group, User, Follow
-from posts.forms import PostForm, CommentForm
+from posts.forms import PostForm, CommentForm, GroupForm
 
 
 def get_page_obj(page_number, posts, limit):
@@ -81,6 +81,18 @@ def post_create(request):
         return redirect('posts:profile', post.author.username)
     return render(request, template, {'form': form})
 
+@login_required
+def group_create(request):
+    """Creating group function. After group created
+     redirects to author profile."""
+    template = 'posts/create_group.html'
+    form = GroupForm(request.POST or None,
+                    files=request.FILES or None)
+    if form.is_valid():
+        group = form.save(commit=False)
+        group.save()
+        return redirect('posts:index')
+    return render(request, template, {'form': form})
 
 def post_edit(request, post_id):
     """Updating post function. After successful update

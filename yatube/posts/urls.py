@@ -25,6 +25,7 @@ urlpatterns = [
          name='profile_unfollow'
          ),
     path('posts/<int:post_id>/delete/', views.post_delete, name='delete_post'),
+    path('create_group/', views.group_create, name='group_create'),
 ]
 
 if settings.DEBUG:
