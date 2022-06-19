@@ -31,6 +31,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '[::1]',
     'testserver',
+    'epsilonmga.pythonanywhere.com',
+    'www.epsilonmga.pythonanywhere.com'
 ]
 
 
