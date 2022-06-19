@@ -9,6 +9,14 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ('title', 'description')
+        labels = {
+            'title': _('Название группы'),
+            'description': _('Описание группы'),
+        }
+        help_texts = {
+            'title': _('Напишите название группы'),
+            'description': _('Напишите краткую характеристику, о чем группа'),
+        }
 
 class PostForm(forms.ModelForm):
     """Form for creating and updating posts."""
