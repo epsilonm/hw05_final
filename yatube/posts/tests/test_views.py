@@ -124,9 +124,16 @@ class PostPagesTests(TestCase):
         )
         self.assertEqual(response.context.get('form').instance, self.post)
 
+    def test_post_delete(self):
+        """Check that delete_post function works correctly."""
+        self.authorized_client.post(
+            reverse('posts:delete_post', kwargs={'post_id': self.post.id})
+        )
+        self.assertFalse(Post.objects.filter(id=self.post.id).exists())
+
     def test_another_group_post_does_not_maps_in_group_list(self):
         """Check that post with group does not maps in another group list."""
-        response = self.authorized_client.get(
+        response = self.authorized_client.post(
             reverse('posts:group_list', kwargs={'slug': self.group.slug}))
         self.assertNotIn(self.another_group_post, response.context['page_obj'])
 

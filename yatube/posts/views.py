@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 
 from posts.models import Post, Group, User, Follow
-from posts.forms import PostForm, CommentForm
+from posts.forms import PostForm, CommentForm, GroupForm
 
 
 def get_page_obj(page_number, posts, limit):
@@ -62,7 +62,7 @@ def post_detail(request, post_id):
     context = {
         'post': post,
         'form': CommentForm(),
-        'comments': post.comments.select_related('author').all()
+        'comments': post.comments.select_related('author')
     }
     return render(request, template, context)
 
@@ -81,6 +81,18 @@ def post_create(request):
         return redirect('posts:profile', post.author.username)
     return render(request, template, {'form': form})
 
+@login_required
+def group_create(request):
+    """Creating group function. After group created
+     redirects to author profile."""
+    template = 'posts/create_group.html'
+    form = GroupForm(request.POST or None,
+                    files=request.FILES or None)
+    if form.is_valid():
+        group = form.save(commit=False)
+        group.save()
+        return redirect('posts:index')
+    return render(request, template, {'form': form})
 
 def post_edit(request, post_id):
     """Updating post function. After successful update
@@ -103,6 +115,15 @@ def post_edit(request, post_id):
                   )
 
 
+def post_delete(request, post_id):
+    """Delete post object and redirects to author profile."""
+    post = get_object_or_404(Post.objects.select_related(
+        'author', 'group'), pk=post_id)
+    if request.user == post.author:
+        post.delete()
+    return redirect('posts:profile', post.author.username)
+
+
 @login_required
 def add_comment(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -117,7 +138,8 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    posts = Post.objects.filter(author__following__user=request.user)
+    posts = Post.objects.select_related(
+        'author', 'group').filter(author__following__user=request.user)
     page_obj = get_page_obj(request.GET.get('page'),
                             posts, settings.POST_LIM)
     context = {
